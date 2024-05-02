@@ -1,4 +1,22 @@
 -- PACKER plugin manager config stuff
+vim.api.nvim_command('set number')
+
+local vim = vim
+local Plug = vim.fn['plug#']
+
+vim.call('plug#begin')
+Plug 'MunifTanjim/nui.nvim'
+vim.call('plug#end')
+
+-----------
+
+
+local Menu = require("nui.menu")
+local event = require("nui.utils.autocmd").event
+
+
+
+
 require('packer').startup(function(use)
 	-- packer can manage itself
 	use 'wbthomason/packer.nvim'
@@ -46,7 +64,12 @@ require('packer').startup(function(use)
 --		use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 	use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
 
-
+	use {
+	  "loctvl842/monokai-pro.nvim",
+	  config = function()
+	    require("monokai-pro").setup()
+	  end
+	}
 end)
 
 
@@ -61,7 +84,56 @@ require('telescope').setup{
   extensions = {
   }
 }
-
+require("monokai-pro").setup({
+  transparent_background = false,
+  terminal_colors = true,
+  devicons = true, -- highlight the icons of `nvim-web-devicons`
+  styles = {
+    comment = { italic = true },
+    keyword = { italic = true }, -- any other keyword
+    type = { italic = true }, -- (preferred) int, long, char, etc
+    storageclass = { italic = true }, -- static, register, volatile, etc
+    structure = { italic = true }, -- struct, union, enum, etc
+    parameter = { italic = true }, -- parameter pass in function
+    annotation = { italic = true },
+    tag_attribute = { italic = true }, -- attribute of tag in reactjs
+  },
+  filter = "pro", -- classic | octagon | pro | machine | ristretto | spectrum
+  -- Enable this will disable filter option
+  day_night = {
+    enable = false, -- turn off by default
+    day_filter = "pro", -- classic | octagon | pro | machine | ristretto | spectrum
+    night_filter = "spectrum", -- classic | octagon | pro | machine | ristretto | spectrum
+  },
+  inc_search = "background", -- underline | background
+  background_clear = {
+    -- "float_win",
+    "toggleterm",
+    "telescope",
+    -- "which-key",
+    "renamer",
+    "notify",
+    -- "nvim-tree",
+    -- "neo-tree",
+    -- "bufferline", -- better used if background of `neo-tree` or `nvim-tree` is cleared
+  },-- "float_win", "toggleterm", "telescope", "which-key", "renamer", "neo-tree", "nvim-tree", "bufferline"
+  plugins = {
+    bufferline = {
+      underline_selected = false,
+      underline_visible = false,
+    },
+    indent_blankline = {
+      context_highlight = "default", -- default | pro
+      context_start_underline = false,
+    },
+  },
+  ---@param c Colorscheme
+  override = function(c) end,
+  ---@param cs Colorscheme
+  ---@param p ColorschemeOptions
+  ---@param Config MonokaiProOptions
+  ---@param hp Helper
+})
 require('telescope').setup {
   extensions = {
     fzf = {
@@ -69,11 +141,14 @@ require('telescope').setup {
       override_generic_sorter = true,  -- override the generic sorter
       override_file_sorter = true,     -- override the file sorter
       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-                                       -- the default case_mode is "smart_case"
+                                      -- the default case_mode is "smart_case"
     }
-  }
+  },
+    defaults = {
+      borderchars = { "█", " ", "▀", "█", "█", " ", " ", "▀" },
+    }
 }
-
+vim.cmd([[colorscheme monokai-pro]])
 require("nvim-tree").setup()
 
 require'lspconfig'.pyright.setup{}
@@ -102,7 +177,11 @@ require("mason").setup({
         -- vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
       end,
     },
+    completion = {
+	    border = "rounded",
+    },
     window = {
+	    border = "rounded",
       -- completion = cmp.config.window.bordered(),
       -- documentation = cmp.config.window.bordered(),
     },
@@ -159,5 +238,13 @@ require("mason").setup({
     capabilities = capabilities
   }
 
-  require('lualine').setup()
+   require('lualine').setup {
+  options = {
+    -- ...
+    theme = 'monokai-pro'
+    -- ...
+  }
+}
+vim.cmd([[colorscheme monokai-pro]])
+
 
